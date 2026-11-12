@@ -1,4 +1,4 @@
-name: Build Alte All Convertor
+name: Build
 on:
   push:
   workflow_dispatch:
@@ -16,8 +16,14 @@ jobs:
           wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip
           sudo unzip -q gradle-8.9-bin.zip -d /opt
           echo «/opt/gradle-8.9/bin» >> $GITHUB_PATH
-      - run: gradle assembleDebug —no-daemon
+      - name: Build
+        run: |
+          for z in *.zip; do [ -f «$z» ] && unzip -qo «$z» -d unpacked; done
+          S=$(find . -maxdepth 4 -name ‘settings.gradle*’ | head -n1)
+          if [ -z «$S» ]; then echo «settings.gradle не найден»; ls -R | head -50; exit 1; fi
+          cd «$(dirname «$S»)»
+          gradle assembleDebug —no-daemon
       - uses: actions/upload-artifact@v4
         with:
-          name: AlteAllConvertor
-          path: app/build/outputs/apk/debug/*.apk
+          name: apk
+          path: «**/build/outputs/apk/debug/*.apk»
