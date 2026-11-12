@@ -22,8 +22,7 @@ jobs:
           S=$(find . -maxdepth 4 -name settings.gradle\* | head -n1)
           if [ x$S = x ]; then echo settings.gradle not found; ls -R | head -50; exit 1; fi
           cd $(dirname $S)
-          gradle —version
-          gradle assembleDebug —no-daemon
+          gradle assembleDebug
       - uses: actions/upload-artifact@v4
         with:
           name: apk
